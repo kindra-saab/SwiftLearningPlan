@@ -256,3 +256,6 @@ print(rectangle.height)
 //prints 12 , as 24 is greater than 12, so due to property wrapper, value is set to 12.
 
 
+
+
+
