@@ -54,3 +54,68 @@ print("Three feet is \(threeFeet) meters")
 
 
 //Extensions can add new convenience initializers to the class, but they can't add new designated initializers or deInitializers to a class.
+
+
+struct Size {
+    var width = 0.0, height = 0.0
+}
+struct Point {
+    var x = 0.0, y = 0.0
+}
+struct Rect {
+    var origin = Point()
+    var size = Size()
+}
+
+
+let defaultRect = Rect()  // here deafult initializer comes in action.
+
+let memberwiseRect = Rect(origin: Point(x: 2.0, y: 2.0),  //here the memberwise initializer comes in aciton.
+   size: Size(width: 5.0, height: 5.0))
+
+print(memberwiseRect.origin.y)
+
+extension Rect {
+    init(center: Point, size: Size) {
+        let originX = center.x - (size.width / 2)
+        let originY = center.y - (size.height / 2)
+        self.init(origin: Point(x: originX, y: originY), size: size)
+    }
+}
+
+//Now we have extended one new initializer to our Rect Structure.
+//We can call 2 types of init of our Rect Struct.
+let centerRect = Rect(center: Point(x: 4.0, y: 4.0),
+                      size: Size(width: 3.0, height: 3.0))
+
+let memberwiseRect2 = Rect(origin: Point(x: 2.0, y: 2.0),
+   size: Size(width: 5.0, height: 5.0))
+
+
+
+//Adding subscripts to the existing type using extensions.
+
+extension Int {
+    subscript(digitIndex: Int) -> Int {
+        var decimalBase = 1
+        for _ in 0..<digitIndex {
+            decimalBase *= 10
+        }
+        return (self / decimalBase) % 10
+    }
+}
+
+
+print(53675635[0])
+
+
+//---------------
+
+extension Int {
+    mutating func square() {   // we have made this function mutable, as we are changing self in this case,
+        self = self * self
+    }
+}
+var someInt = 3
+someInt.square()
+print(someInt)
