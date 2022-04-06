@@ -99,3 +99,96 @@ museum.flyingDemo(flyingObject: myEagle)
 //class myClass:SuperClass, protocol1, protocol2 {
 //
 //}
+
+
+
+//   ****** Delegate Pattern ******
+
+//  Simple example - my father told me to bring something from the market and I performed that action.
+// Means one class is giving some work to another class for performing some action.
+
+
+
+
+
+
+
+ 
+//This protocol only has one requirement.
+//In order to get advancedLifeSupport certification , a person must know how to perform PCR.
+protocol advancedLifeSupport {
+    func performCPR()
+}
+
+class EmergencyCallHandler{
+    
+    var delegate: advancedLifeSupport?  // here we are using protocol as a datatype.
+    //we have a delegate property which has a datatype of advacedLifeSupport.
+    //The above 112 line means that ->
+    //whoever(any class or struct) sets themselves as a delegates must have the advancedLifeSuport protocol adopted.
+    //So, they must be able to know how to perform CPR.
+    
+    
+    func assessSituation() {
+        print("Can you tell me what happened ?")
+    }
+    
+    func medicalEmergency(){
+        
+        delegate?.performCPR()
+        //he don't care who is the delegate, but he knows delegate is a person who knows how to perform CPR, because type of delegate is a protocol.
+        
+    }
+}
+
+struct person1: advancedLifeSupport {
+     
+    
+    init(handler: EmergencyCallHandler){
+        handler.delegate = self
+    }
+    
+    func performCPR() {
+        print("It Measures the Heart Rate")
+    }
+}
+
+class Doctor:advancedLifeSupport{
+    
+    
+    //Now when doctor is on shift, he sets himself as a delegate.
+    
+    init(handler:EmergencyCallHandler)
+    {
+        handler.delegate = self   // He is telling that I'm on shift, and assigns himself as a delegate.
+    }
+    
+    func performCPR() {
+        print("Doctor is performing cpr")
+    }
+    
+    func useStethoscope()
+    {
+        print("Doctor is using Stethoscope.")
+    }
+}
+
+
+class surgeon:Doctor {   // it automatically has protocol because surgeon is inheriting from doctor.
+     
+    override func performCPR() {
+        super.performCPR()
+        print("Surgeon is also helping doctor in performing CPR.")
+    }
+}
+    
+
+
+
+let emergencyPerson = EmergencyCallHandler()
+let pcrPerson = person1(handler: emergencyPerson)
+//This above call means I'm the one who performs CPR and listen to call when emergency person call me.
+
+
+emergencyPerson.assessSituation()
+emergencyPerson.medicalEmergency()
