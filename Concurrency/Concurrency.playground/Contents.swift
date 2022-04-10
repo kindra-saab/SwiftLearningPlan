@@ -170,3 +170,130 @@ actor TemperatureLogger {
 // if code from another task is already interacting with the logger, this code suspends while it waits to access the property.
 
 
+
+
+//*********    ***********   *************
+
+//So how can we execute code on other threads in Swift and iOS? Here are the iOS and Swift native possibilities:
+//
+//
+//1. Grand Central Dispatch (GCD)
+//2. Operation and OperationQueues
+//3. Swift Concurrency
+
+
+//Grand Central Dispatch (GCD) Is Used For Managing Concurrent Operation, It Is A Low-Level API. It Was First Introduced In IOS 4. The Main Purpose Of Grand Central Dispatch Is To Manage The Heavy Tasks In The Background.
+
+//First, we will see what is a queue, a queue is a block of code that is managed by the operating system to execute it synchronously or asynchronously either on the main thread or background thread
+
+
+func myFirstQueue() {
+        let myqueue = DispatchQueue(label: "com.app.myqueue")
+        myqueue.sync {
+            for item in 1..<10{
+                print(item)
+            }
+ 
+        }
+        for item in 20..<30 {
+            print(item)
+        }
+    }
+
+myFirstQueue()
+
+
+func myFirstQueue2() {
+        let myqueue = DispatchQueue(label: "com.app.myqueue")
+        myqueue.async {
+            for item in 1..<10{
+                print(item)
+            }
+ 
+        }
+        for item in 20..<30 {
+            print(item)
+        }
+    }
+
+myFirstQueue2()
+
+//Quality Of Service.
+
+//1. To determine the priorities of the task we used the QoS class property.
+//2. It is done so that system will know which task has higher priority. So that the execution has to be done accordingly. Although the task runs on the main thread has the highest priority since it makes UI responsive.
+
+
+func exampleQoS() {
+        let firstQueue = DispatchQueue(label: "com.app.firstQueue", qos: .userInitiated)
+        let secondQueue = DispatchQueue(label: "com.app.secondQueue", qos: .utility)
+        secondQueue.async {
+            for item in 1..<10{
+                print(item)
+            }
+        }
+        firstQueue.async {
+            for item in 20..<30 {
+                print(item)
+            }
+        }
+        
+    }
+
+exampleQoS()
+
+
+func exampleSerialQueue() {
+        let queue = DispatchQueue(label: "com.app.queue", qos: .utility)
+        
+        queue.async {
+            for _ in 1..<5{
+                print("**********")
+            }
+        }
+        
+        queue.async {
+            for _ in 1..<5{
+                print("AAAAAAAAAA")
+            }
+        }
+        
+        queue.async {
+            for _ in 1..<5{
+                print("0000000000")
+            }
+        }
+ 
+    }
+
+exampleSerialQueue()
+// In this case we see output as when first function completes then only, then only second function start as they are in serial queue.
+
+
+//Now we make our queue as Concurrent.
+
+
+func concurrentQueueExample(){
+        let concurrentQueue = DispatchQueue(label: "com.app.concurrentQueue", qos: .userInitiated, attributes: .concurrent)
+        concurrentQueue.async {
+            for _ in 1..<10{
+                print("**********")
+            }
+        }
+        
+        concurrentQueue.async {
+            for _ in 30..<40{
+                print("AAAAAAAAAA")
+            }
+        }
+        
+        concurrentQueue.async {
+            for _ in 50..<60{
+                print("0000000000")
+            }
+        }
+    }
+
+concurrentQueueExample() // Now the output is mixed.
+
+
